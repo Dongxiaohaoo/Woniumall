@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.OrderDao">
+    <select id="getList" parameterType="Order" resultType="Order">
+        SELECT * FROM mall_order mo INNER JOIN mall_user mu ON mo.userid = mu.id
+        <where>
+            <if test="username != null and username !=''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="status != null and status != ''">
+                and mo.status = #{status}
+            </if>
+            <if test="lowerTime != null and lowerTime != ''">
+                and ordertime &gt; #{lowerTime}
+            </if>
+            <if test="upperTime != null and upperTime != ''">
+                and ordertime &lt; #{upperTime}
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="queryOrderById" resultType="Order">-->
+    <!--    SELECT *-->
+    <!--    FROM mall_order mo-->
+    <!--             INNER JOIN mall_user mu ON mo.userid = mu.id-->
+    <!--    WHERE id = #{id}-->
+    <!--</select>-->
+
+    <resultMap id="OrderResultMap" type="Order">
+        <id column="mid" property="id"></id>
+        <result column="no" property="no"></result>
+        <result column="userid" property="userid"></result>
+        <result column="ordertime" property="ordertime"></result>
+        <result column="paytype" property="paytype"></result>
+        <result column="paytime" property="paytime"></result>
+        <result column="receivetime" property="receivetime"></result>
+        <result column="totalmoney" property="totalmoney"></result>
+        <result column="address" property="address"></result>
+        <result column="accept" property="accept"></result>
+        <result column="telephone" property="telephone"></result>
+        <result column="status" property="status"></result>
+        <collection property="orderItemList" column="id" select="com.woniu.mall.dao.OrderItemDao.queryOrderItemListByOrderId" />
+    </resultMap>
+    <select id="queryOrderById" resultMap="OrderResultMap">
+        SELECT *,mo.id mid
+        FROM mall_order mo
+                 INNER JOIN mall_user mu ON mo.userid = mu.id
+        WHERE mo.id = #{id}
+    </select>
+
+    <update id="senGoods">
+        UPDATE mall_order SET status = 3 WHERE id = #{id}
+    </update>
+
+    <insert id="addOreder" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="Order">
+        INSERT INTO mall_order VALUES
+(NULL ,#{no},#{userid},#{ordertime},
+ #{paytype},#{paytime},#{receivetime},#{totalmoney},
+ #{address},#{accept},#{telephone},#{status})
+    </insert>
+
+    <select id="queryOrderByUserId" resultMap="OrderResultMap">
+        SELECT *,id mid FROM mall_order WHERE userid = #{userid}
+    </select>
+
+    <select id="getWaitPayment" parameterType="User" resultMap="OrderResultMap">
+        SELECT * FROM mall_order WHERE status = 1 AND userid = #{id}
+    </select>
+
+    <select id="getAlreadyPay" parameterType="User" resultMap="OrderResultMap">
+        SELECT * FROM mall_order WHERE status = 0 AND userid = #{id}
+    </select>
+
+    <select id="getOrderStatusNums"  resultMap="OrderResultMap">
+        SELECT * FROM mall_order WHERE status = #{status} AND userid = #{user.id}
+    </select>
+
+    <select id="getOrderById" resultMap="OrderResultMap">
+        SELECT * FROM mall_order WHERE id = #{id}
+    </select>
+
+</mapper>

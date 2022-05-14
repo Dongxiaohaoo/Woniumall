@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.OrderItemDao">
+    <resultMap id="queryOrderItemListByOrderIdResult" type="OrderItem">
+        <id column="name" property="goods.name" />
+        <id column="image" property="goods.image" />
+        <id column="saleprice" property="goods.saleprice" />
+    </resultMap>
+    <select id="queryOrderItemListByOrderId" resultMap="queryOrderItemListByOrderIdResult">
+        SELECT * FROM mall_order_item INNER JOIN mall_goods ON mall_order_item.goodsid = mall_goods.id WHERE orderid = #{orderid}
+    </select>
+
+    <insert id="addOrderItem" parameterType="OrderItem">
+        INSERT INTO mall_order_item VALUES(NULL,#{orderid},#{goodsid},#{num},#{price})
+    </insert>
+
+    <select id="getOrderItemByOrderId" resultMap="queryOrderItemListByOrderIdResult">
+        SELECT * FROM mall_order_item WHERE orderid = #{orderid}
+    </select>
+</mapper>

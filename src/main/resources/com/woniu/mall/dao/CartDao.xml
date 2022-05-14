@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.CartDao">
+    <select id="queryByUseridAndGoodsId" resultType="Cart">
+        SELECT * FROM mall_cart WHERE userid = #{userid} AND goodsid = #{goodsid}
+    </select>
+    
+    <select id="add" parameterType="Cart">
+        INSERT INTO mall_cart VALUES
+        (NULL ,#{userid},#{goodsid},#{num},#{addprice},#{addtime},#{ischecked})
+    </select>
+
+    <!--更新商品数量-->
+    <update id="updateCart">
+        UPDATE mall_cart SET num = #{num} WHERE id = #{id}
+    </update>
+
+    <resultMap id="queryUserCartResult" type="Cart">
+        <association property="goods" column="goodsid" select="com.woniu.mall.dao.GoodsDao.queryById" />
+    </resultMap>
+    <!--查询一个用户所有购物车-->
+    <select id="queryUserCart" parameterType="User" resultMap="queryUserCartResult">
+        SELECT * FROM mall_cart WHERE userid = #{id}
+    </select>
+
+    <update id="updateIschecked">
+        UPDATE mall_cart SET ischecked = #{status} WHERE id = #{id}
+    </update>
+
+    <update id="updateCartNum">
+        UPDATE mall_cart SET num = #{num} WHERE id = #{id}
+    </update>
+
+    <delete id="delCart">
+        DELETE FROM mall_cart WHERE id = ${id}
+    </delete>
+</mapper>

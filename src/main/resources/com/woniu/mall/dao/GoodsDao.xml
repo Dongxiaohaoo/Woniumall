@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.GoodsDao">
+    <select id="queryByCategoryId" resultType="Goods">
+        SELECT * FROM mall_goods WHERE categoryid = #{id}
+    </select>
+
+    <select id="queryAllGoods" parameterType="Goods" resultType="Goods">
+        SELECT *,c.name cname FROM mall_goods g INNER JOIN mall_category c ON g.categoryid = c.id
+        <where>
+            <if test="name != null and name != ''">
+                AND g.name like concat('%',#{name},'%')
+            </if>
+            <if test="status != null and status != ''">
+                AND g.status = #{status}
+            </if>
+            <if test="categoryid != null and categoryid!= ''">
+                AND categoryid = #{categoryid}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delByid">
+        DELETE FROM mall_goods where id in
+        <foreach collection="array" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <update id="soldOut">
+        UPDATE mall_goods SET status = "1",downtime=#{Date} WHERE id in
+        <foreach collection="stringToInt" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </update>
+
+    <update id="shelves">
+        UPDATE mall_goods SET status = "0",uptime=#{Date} WHERE id in
+        <foreach collection="stringToInt" open="(" close=")" separator="," item="ids">
+            #{ids}
+        </foreach>
+    </update>
+
+    <insert id="addGoods" parameterType="Goods">
+        INSERT INTO mall_goods VALUES
+      (NULL,#{name},#{no},#{categoryid},#{stock},#{author},#{publisher},#{publishtime},
+          #{marketprice},#{saleprice},#{isnew},#{ishot},#{description},#{image},#{uptime},#{downtime},#{salenum},#{remarknum},#{remarkscore},#{status})
+    </insert>
+
+    <select id="getGoodsById" resultType="Goods">
+        SELECT *,c.name cname FROM mall_goods g INNER JOIN mall_category c ON g.categoryid = c.id WHERE g.id = #{id}
+    </select>
+
+    <update id="updateGoods" parameterType="Goods">
+        UPDATE mall_goods SET name =#{name},categoryid=#{categoryid},
+        stock=#{stock},author=#{author},author=#{author},
+        publishtime=#{publishtime},marketprice=#{marketprice},
+        saleprice=#{saleprice},isnew=#{isnew},ishot=#{ishot},
+        salenum=#{salenum},remarknum=#{remarknum},remarkscore=#{remarkscore},
+        status=#{status},description=#{description}<if test="image != '' and image != null">
+        ,image=#{image}</if> WHERE id = #{id}
+    </update>
+
+    <select id="getNewGoods" resultType="Goods">
+        SELECT * FROM mall_goods WHERE isnew = 'y' LIMIT ${id}
+    </select>
+
+    <select id="getHotGoods" resultType="Goods">
+        SELECT * FROM mall_goods WHERE ishot = 'y' LIMIT ${id}
+    </select>
+
+    <select id="queryById" resultType="Goods">
+        SELECT * FROM mall_goods WHERE id = #{id}
+    </select>
+
+    <select id="getGoodsByName" resultType="Goods">
+        SELECT * FROM mall_goods WHERE name like concat('%',#{name},'%') AND status = '0'
+    </select>
+</mapper>

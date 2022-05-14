@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.UserDao">
+    <!--//id查用户-->
+    <!--User getUserById(Integer id);-->
+    <select id="getUserById" resultType="User">
+        SELECT * FROM mall_user WHERE id = #{id}
+    </select>
+
+    <!--//修改状态-->
+    <!--void updateStatus(User user);-->
+    <update id="updateStatus" parameterType="User">
+        UPDATE mall_user set status = #{status} WHERE id = #{id}
+    </update>
+    <!--修改头像-->
+    <update id="updateAvatar" parameterType="User">
+        UPDATE mall_user set avatar = #{avatar} WHERE id = #{id}
+    </update>
+
+    <!--修改密码-->
+    <update id="updatePassword" parameterType="User">
+        UPDATE mall_user set password = #{password} WHERE id = #{id}
+    </update>
+
+    <!--List<User> queryAllUser();-->
+    <select id="queryAllUser" parameterType="User" resultType="User">
+        SELECT * FROM mall_user
+        <where>
+            <if test="status != '' and status != null">
+                and status = #{status}
+            </if>
+            <if test="username != '' and username != null">
+                and username like concat('%',#{username},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--void addUser(User user);-->
+    <insert id="addUser" parameterType="User">
+        INSERT INTO mall_user VALUES
+        (NULL ,#{username}, #{password}, #{email}, #{score},
+        #{regtime}, #{money}, #{avatar}, #{status},#{phone})
+    </insert>
+
+    <select id="queryByAccount" resultType="User">
+        SELECT * FROM mall_user WHERE username = #{username}
+    </select>
+
+    <select id="queryByEmail" resultType="User">
+        SELECT * FROM mall_user WHERE  email = #{email}
+    </select>
+
+    <select id="login" resultType="User">
+        SELECT * FROM mall_user WHERE username = #{account} AND password = #{password}
+    </select>
+
+    <update id="activation" parameterType="User">
+        UPDATE mall_user SET status = 0 WHERE username = #{username} AND phone = #{phone} AND email = #{email}
+    </update>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.AddressDao">
+    <select id="getAllAddress" resultType="Address">
+        SELECT * FROM mall_address WHERE userid = #{id}
+    </select>
+
+    <select id="getAddressByUserIdAndAddressId" resultType="Address">
+        SELECT * FROM mall_address WHERE userid = #{id} AND id = #{addressId}
+    </select>
+
+    <delete id="delByid">
+        DELETE FROM mall_address WHERE id = #{id}
+    </delete>
+
+    <update id="defaultAddress">
+        UPDATE mall_address SET isdefault = 'Y' WHERE id = #{id}
+    </update>
+    
+    <update id="setAllNoDefaule">
+        UPDATE mall_address SET isdefault = 'N' WHERE userid = #{userid}
+    </update>
+
+    <insert id="addAddress" parameterType="Address">
+        INSERT INTO mall_address VALUES (NULL,#{userid},#{accept},#{telephone},#{province},#{city},#{area},#{street},#{isdefault})
+    </insert>
+</mapper>

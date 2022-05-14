@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mall.dao.CategoryDao">
+
+    <select id="queryAllCategory" resultType="Category">
+        SELECT * FROM mall_category
+    </select>
+
+    <!--Category getById(Integer id);-->
+    <select id="getById" resultType="Category">
+        SELECT * FROM mall_category WHERE id = #{id}
+    </select>
+
+    <!--void insert(Category category);-->
+    <insert id="insert" parameterType="Category">
+        INSERT INTO mall_category VALUES (null,#{name},#{status})
+    </insert>
+    <!--void update(Category category);-->
+    <update id="update" parameterType="Category">
+        UPDATE mall_category set name = #{name},status = #{status} WHERE id = #{id}
+    </update>
+
+    <!--void dellById(Integer id);-->
+    <delete id="dellById">
+        DELETE FROM mall_category WHERE id = #{id}
+    </delete>
+
+    <select id="queryByName" parameterType="Category" resultType="Category">
+        SELECT * FROM mall_category WHERE name = #{name}
+    </select>
+
+    <select id="queryNormalCategory" resultType="Category">
+        SELECT * FROM mall_category WHERE status = 0
+    </select>
+</mapper>
